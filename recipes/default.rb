@@ -64,6 +64,41 @@ link '/etc/nginx/sites-enabled/default.conf' do
   link_type :symbolic
 end
 
+template '/etc/nginx/sites-available/webmin.conf' do
+  source 'webmin.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  variables ({
+    :fqdn => node['fqdn']
+  })
+  action :create
+end
+
+template '/etc/nginx/sites-available/jenkins.conf' do
+    source 'jenkins.conf.erb'
+    owner 'root'
+    group 'root'
+    mode '0644'
+    variables ({
+      :fqdn => node['fqdn']
+    })
+    action :create
+end
+  
+link '/etc/nginx/sites-enabled/webmin.conf' do
+  to '/etc/nginx/sites-available/webmin.conf'
+  link_type :symbolic
+end
+
+link '/etc/nginx/sites-enabled/default.conf' do
+  to '/etc/nginx/sites-available/webmin.conf'
+  link_type :symbolic
+end
+
+serivce 'nginx' do
+  action [:start, :enable]
+end
 
 
 
