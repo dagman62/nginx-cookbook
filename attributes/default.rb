@@ -1,1 +1,1 @@
-node.default['distro'] = "node['platform']"
+node.default['distro'] = node['platform']
