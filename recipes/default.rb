@@ -31,4 +31,14 @@ package 'nginx' do
   action :install
 end
 
+bash 'Create Sites Directories' do
+  code <<-EOH
+  mkdir /etc/nginx/sites-enabled
+  mkdir /etc/nginx/sites-available
+  touch /tmp/directories
+  EOH
+  action :run
+  not_if { File.exist?('/tmp/directories') }
+end
+
 
