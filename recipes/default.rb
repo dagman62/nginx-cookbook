@@ -23,8 +23,10 @@ end
 bash 'Update cache and Update' do
   code <<-EOH
   yum makecache && yum update -y
+  touch /tmp/updated
   EOH
   action :run
+  not_if { File.exist?('/tmp/updated') }
 end
 
 package 'nginx' do
@@ -40,5 +42,30 @@ bash 'Create Sites Directories' do
   action :run
   not_if { File.exist?('/tmp/directories') }
 end
+
+cookbook_file '/etc/ngnix/sites-available/default.conf' do
+  source 'default.conf'
+  owner 'root'
+  group 'root'
+  mode '0755'
+  action :create
+end
+
+cookbook_file '/etc/nginx/nginx.conf' do
+  source 'nginx.conf'
+  owner 'root'
+  group 'root'
+  mode '0755'
+  action :create
+end
+
+link '/etc/nginx/sites-enabled/default.conf' do
+  to '/etc/nginx/sites-available/default.conf'
+  link_type :symbolic
+end
+
+
+
+
 
 
