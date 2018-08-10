@@ -47,7 +47,7 @@ cookbook_file '/etc/ngnix/sites-available/default.conf' do
   source 'default.conf'
   owner 'root'
   group 'root'
-  mode '0755'
+  mode '0644'
   action :create
 end
 
@@ -55,7 +55,7 @@ cookbook_file '/etc/nginx/nginx.conf' do
   source 'nginx.conf'
   owner 'root'
   group 'root'
-  mode '0755'
+  mode '0644'
   action :create
 end
 
