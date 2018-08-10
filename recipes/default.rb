@@ -43,7 +43,7 @@ bash 'Create Sites Directories' do
   not_if { File.exist?('/tmp/directories') }
 end
 
-cookbook_file '/etc/nginx/sites-available/default.conf' do
+cookbook_file '/etc/nginx/sites-available/default.conf.save' do
   source 'default.conf'
   owner 'root'
   group 'root'
@@ -59,40 +59,22 @@ cookbook_file '/etc/nginx/nginx.conf' do
   action :create
 end
 
-link '/etc/nginx/sites-enabled/default.conf' do
-  to '/etc/nginx/sites-available/default.conf'
-  link_type :symbolic
-end
-
-template '/etc/nginx/sites-available/webmin.conf' do
-  source 'webmin.conf.erb'
+template '/etc/nginx/sites-available/default.conf' do
+  source 'default.conf.erb'
   owner 'root'
   group 'root'
   mode '0644'
   variables ({
-    :fqdn => node['fqdn'],
+    :staticname => node['staticname'],
+    :fqdn       => node['fqdn'],
+    :host       => node['hostname'],
+    :port       => node['port'],
   })
   action :create
 end
 
-template '/etc/nginx/sites-available/jenkins.conf' do
-    source 'jenkins.conf.erb'
-    owner 'root'
-    group 'root'
-    mode '0644'
-    variables ({
-      :fqdn => node['fqdn'],
-    })
-    action :create
-end
-  
-link '/etc/nginx/sites-enabled/webmin.conf' do
-  to '/etc/nginx/sites-available/webmin.conf'
-  link_type :symbolic
-end
-
-link '/etc/nginx/sites-enabled/jenkins.conf' do
-  to '/etc/nginx/sites-available/jenkins.conf'
+link '/etc/nginx/sites-enabled/default.conf' do
+  to '/etc/nginx/sites-available/default.conf'
   link_type :symbolic
 end
 
@@ -106,7 +88,6 @@ template '/usr/share/nginx/html/index.html' do
   })
   action :create
 end
-
 
 service 'nginx' do
   action [:start, :enable]
