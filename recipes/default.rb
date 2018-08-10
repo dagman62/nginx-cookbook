@@ -17,5 +17,18 @@ if platform == 'centos' || platform == 'fedora'
         :distro => node['distro']
       })
       action :create
-    end
+  end
 end
+
+bash 'Update cache and Update' do
+  code <<-EOH
+  yum makecache && yum update -y
+  EOH
+  action :run
+end
+
+package 'nginx' do
+  action :install
+end
+
+
