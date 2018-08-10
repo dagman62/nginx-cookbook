@@ -43,7 +43,7 @@ bash 'Create Sites Directories' do
   not_if { File.exist?('/tmp/directories') }
 end
 
-cookbook_file '/etc/ngnix/sites-available/default.conf' do
+cookbook_file '/etc/nginx/sites-available/default.conf' do
   source 'default.conf'
   owner 'root'
   group 'root'
