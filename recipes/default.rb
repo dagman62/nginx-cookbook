@@ -96,7 +96,7 @@ link '/etc/nginx/sites-enabled/default.conf' do
   link_type :symbolic
 end
 
-serivce 'nginx' do
+service 'nginx' do
   action [:start, :enable]
 end
 
