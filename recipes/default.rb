@@ -70,7 +70,7 @@ template '/etc/nginx/sites-available/webmin.conf' do
   group 'root'
   mode '0644'
   variables ({
-    :fqdn => node['fqdn']
+    :fqdn => node['fqdn'],
   })
   action :create
 end
@@ -81,7 +81,7 @@ template '/etc/nginx/sites-available/jenkins.conf' do
     group 'root'
     mode '0644'
     variables ({
-      :fqdn => node['fqdn']
+      :fqdn => node['fqdn'],
     })
     action :create
 end
@@ -91,10 +91,22 @@ link '/etc/nginx/sites-enabled/webmin.conf' do
   link_type :symbolic
 end
 
-link '/etc/nginx/sites-enabled/default.conf' do
-  to '/etc/nginx/sites-available/webmin.conf'
+link '/etc/nginx/sites-enabled/jenkins.conf' do
+  to '/etc/nginx/sites-available/jenkins.conf'
   link_type :symbolic
 end
+
+template '/usr/share/nginx/html/index.html' do
+  source 'index.html.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  variables ({
+    :fqdn => node['fqdn'],
+  })
+  action :create
+end
+
 
 service 'nginx' do
   action [:start, :enable]
