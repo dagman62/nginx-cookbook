@@ -20,27 +20,31 @@ if platform == 'centos' || platform == 'fedora'
   end
 end
 
-bash 'Update cache and Update' do
-  code <<-EOH
-  yum makecache && yum update -y
-  touch /tmp/updated
-  EOH
-  action :run
-  not_if { File.exist?('/tmp/updated') }
+if platform == 'centos' || platform == 'fedora'
+  bash 'Update cache and Update' do
+    code <<-EOH
+    yum makecache && yum update -y
+    touch /tmp/updated
+    EOH
+    action :run
+    not_if { File.exist?('/tmp/updated') }
+  end
 end
 
 package 'nginx' do
   action :install
 end
 
-bash 'Create Sites Directories' do
-  code <<-EOH
-  mkdir /etc/nginx/sites-enabled
-  mkdir /etc/nginx/sites-available
-  touch /tmp/directories
-  EOH
-  action :run
-  not_if { File.exist?('/tmp/directories') }
+if platform == 'centos' || platform == 'fedora'
+  bash 'Create Sites Directories' do
+    code <<-EOH
+    mkdir /etc/nginx/sites-enabled
+    mkdir /etc/nginx/sites-available
+    touch /tmp/directories
+    EOH
+    action :run
+    not_if { File.exist?('/tmp/directories') }
+  end
 end
 
 cookbook_file '/etc/nginx/sites-available/default.conf.save' do
