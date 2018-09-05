@@ -75,6 +75,10 @@ service 'nginx' do
   action [:start, :enable]
 end
 
+service 'nginx' do
+  action :reload
+end
+
 
 
 
