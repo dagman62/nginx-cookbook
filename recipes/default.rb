@@ -60,8 +60,8 @@ if platform == 'ubuntu' || platform == 'debian'
     group 'root'
     mode '0644'
     variables ({
-      :fqdb     =>  node['fqdn'],
-      :portnun  =>  node['app']['port'],
+      :fqdn     =>  node['fqdn'],
+      :portnum  =>  node['app']['port'],
     })
     action :create
   end
