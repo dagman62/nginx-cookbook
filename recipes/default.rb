@@ -66,7 +66,7 @@ if platform == 'ubuntu' || platform == 'debian'
     action :create
   end
   link '/etc/nginx/sites-enabled/default' do
-    to '/etc/nginx/sites-avaliable/app.conf'
+    to '/etc/nginx/sites-available/app.conf'
     link_type :symbolic
   end
 end
