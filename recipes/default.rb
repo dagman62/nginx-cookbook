@@ -4,10 +4,6 @@
 #
 # Copyright:: 2018, The Authors, All Rights Reserved.
 
-log "Your Platform is, #{node["distro"]}!" do
-  level :info
-end
-
 platform = node['platform']
 
 if platform == 'centos' || platform == 'fedora'
@@ -45,52 +41,34 @@ if platform == 'centos' || platform == 'fedora'
     action :run
     not_if { File.exist?('/tmp/directories') }
   end
+  cookbook_file '/etc/nginx/nginx.conf' do
+    source 'nginx.conf'
+    owner 'root'
+    group 'root'
+    mode '0644'
+    action :create
+  end
 end
 
-cookbook_file '/etc/nginx/sites-available/default.conf.save' do
-  source 'default.conf'
-  owner 'root'
-  group 'root'
-  mode '0644'
-  action :create
-end
-
-cookbook_file '/etc/nginx/nginx.conf' do
-  source 'nginx.conf'
-  owner 'root'
-  group 'root'
-  mode '0644'
-  action :create
-end
-
-template '/etc/nginx/sites-available/default.conf' do
-  source 'default.conf.erb'
-  owner 'root'
-  group 'root'
-  mode '0644'
-  variables ({
-    :staticname => node['staticname'],
-    :fqdn       => node['fqdn'],
-    :host       => node['hostname'],
-    :port       => node['port'],
-  })
-  action :create
-end
-
-link '/etc/nginx/sites-enabled/default.conf' do
-  to '/etc/nginx/sites-available/default.conf'
-  link_type :symbolic
-end
-
-template '/usr/share/nginx/html/index.html' do
-  source 'index.html.erb'
-  owner 'root'
-  group 'root'
-  mode '0644'
-  variables ({
-    :fqdn => node['fqdn'],
-  })
-  action :create
+if platform == 'ubuntu' || platform == 'debian'
+  file '/etc/nginx/sites-enabled/default' do
+    action :delete
+  end
+  template '/etc/nginx/sites-available/app.conf' do
+    source 'app.conf.erb'
+    owner 'root'
+    group 'root'
+    mode '0644'
+    variables ({
+      :fqdb     =>  node['fqdn'],
+      :portnun  =>  node['app']['port'],
+    })
+    action :create
+  end
+  link '/etc/nginx/sites-enabled/default' do
+    to '/etc/nginx/sites-avaliable/app.conf'
+    link_type :symbolic
+  end
 end
 
 service 'nginx' do
