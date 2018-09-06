@@ -5,6 +5,7 @@
 # Copyright:: 2018, The Authors, All Rights Reserved.
 
 platform = node['platform']
+$jenkins = node['nginx']['jenkins']
 
 if platform == 'centos' || platform == 'fedora'
   template '/etc/yum.repos.d/nginx.repo' do
@@ -54,6 +55,9 @@ if platform == 'ubuntu' || platform == 'debian'
   file '/etc/nginx/sites-enabled/default' do
     action :delete
   end
+end
+
+if $jenkins == 'false'
   template '/etc/nginx/sites-available/app.conf' do
     source 'app.conf.erb'
     owner 'root'
@@ -61,7 +65,7 @@ if platform == 'ubuntu' || platform == 'debian'
     mode '0644'
     variables ({
       :fqdn     =>  node['fqdn'],
-      :portnum  =>  node['app']['port'],
+      :portnum  =>  node['nginx']['app']['port'],
     })
     action :create
   end
@@ -69,8 +73,25 @@ if platform == 'ubuntu' || platform == 'debian'
     to '/etc/nginx/sites-available/app.conf'
     link_type :symbolic
   end
+else 
+  template '/etc/nginx/sites-available/jenkins.conf' do
+    source 'jenkins.conf.erb'
+    owner 'root'
+    group 'root'
+    mode '0644'
+    variables ({
+      :fqdn     =>  node['fqdn'],
+      :portnum  =>  node['nginx']['app']['port'],
+      :host     =>  node['hostname'],
+    })
+    action :create
+  end
+  link '/etc/nginx/sites-enabled/default' do
+    to '/etc/nginx/sites-available/jenkins.conf'
+    link_type :symbolic
+  end
 end
-
+  
 service 'nginx' do
   action [:start, :enable]
 end

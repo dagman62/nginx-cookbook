@@ -1,1 +1,2 @@
-node.default['app']['port'] = '8080'
+default['nginx']['app']['port'] = '8080'
+default['nginx']['jenkins'] = 'false'
