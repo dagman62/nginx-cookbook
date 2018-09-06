@@ -4,7 +4,7 @@
 
 ### in the metadata.rb
 ```
-depends 'nginx', ~= '1.0.0'
+depends 'nginx', '~> 1.0.0'
 ```
 ### in the recipe/default.rb
 ```
